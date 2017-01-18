@@ -76,6 +76,9 @@ class BaseVideoPlayer(Plugin):
             frag.add_javascript(self.resource_string(
                 '../static/bower_components/videojs-transcript/dist/videojs-transcript.js'
             ))
+            frag.add_javascript(self.render_resource(
+                '../static/js/transcript-download.js', **context
+            ))
             frag.add_javascript(
                 self.render_resource('../static/js/videojs-transcript.js', **context)
             )

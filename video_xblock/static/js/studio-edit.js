@@ -226,7 +226,7 @@ function StudioEditableXBlock(runtime, element) {
             }
         })
     };
-    /** Replaces an existing transcript to transcriptsValue or adds new */
+    /** Replaces an existing transcript to transcriptsValue or adds new and return true if new one was added or false otherwise */
     var pushTranscript = function (lang, label, url, oldLang, $uploadButton){
         var indexLanguage;
         for (var i=0; i < transcriptsValue.length; i++){
@@ -241,17 +241,15 @@ function StudioEditableXBlock(runtime, element) {
             if (url) {
               transcriptsValue[indexLanguage].url = url;
             }
+            return false;
         } else {
             transcriptsValue.push({
                 lang: lang,
                 url: url,
                 label: label
             });
-            if ($uploadButton) {
-              $uploadButton.removeClass('is-hidden');
-            }
+            return true;
         }
-        $('.add-transcript').removeClass('is-disabled');
     };
 
     var clickUploader = function(event){
@@ -279,7 +277,11 @@ function StudioEditableXBlock(runtime, element) {
         var $uploadButton = $('.upload-transcript', $langSelectParent);
         var oldLang = $uploadButton.data('lang-code');
         if (selectedLanguage != oldLang && selectedLanguage != ''){
-            pushTranscript(selectedLanguage, languageLabel, undefined, oldLang, $uploadButton);
+            var newTranscriptAdded = pushTranscript(selectedLanguage, languageLabel, undefined, oldLang);
+            if (newTranscriptAdded){
+                $uploadButton.removeClass('is-hidden');
+            };
+            $('.add-transcript').removeClass('is-disabled');
             disabledLanguages.push(selectedLanguage);
             if (oldLang != ''){
                 removeLanguage(oldLang);
@@ -358,6 +360,7 @@ function StudioEditableXBlock(runtime, element) {
             $('input[data-field-name=' + fieldName + ']').val(url).change();
         } else {
             pushTranscript(lang, label, url);
+            $('.add-transcript').removeClass('is-disabled');
             $('input[data-field-name=' + fieldName + ']').val(JSON.stringify(transcriptsValue)).change();
             $(currentLiTag).find('.upload-transcript').text('Replace');
             $(currentLiTag).find('.download-transcript')
