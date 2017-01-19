@@ -45,7 +45,7 @@ domReady(function() {
       }
       this.player_.trigger('captionstrackchange');
       this.player_.trigger('subtitlestrackchange');
-      this.player_.trigger('currentlanguagechanged');
+      this.player_.trigger('languagechange');
     }
   });
 
@@ -66,16 +66,26 @@ domReady(function() {
         this.menu = this.player_.singleton_menu;
       }
 
-      this.enabled_ = true;
       this.el_.setAttribute('aria-haspopup', 'true');
       this.el_.setAttribute('role', 'menuitem');
 
+      // Events of ToggleButton
       this.on('click', this.onClick);
       this.on('mouseenter', function(event) {
         this.menu.el_.classList.add('is-visible');
+        var caret_button = this.$$('.vjs-custom-caret-button', this.el_.parentNode);
+        if (caret_button.length > 0) {
+          caret_button[0].classList.add('fa-caret-up');
+          caret_button[0].classList.remove('fa-caret-left');
+        }
       });
-      this.on('mouseout', function(event) {
+      this.on('mouseleave', function(event) {
         this.menu.el_.classList.remove('is-visible');
+        var caret_button = this.$$('.vjs-custom-caret-button', this.el_.parentNode);
+        if (caret_button.length > 0) {
+          caret_button[0].classList.remove('fa-caret-up');
+          caret_button[0].classList.add('fa-caret-left');
+        }
       });
 
       this.createEl();
@@ -125,7 +135,6 @@ domReady(function() {
       el.setAttribute('aria-live', 'polite');
       el.classList += ' icon fa ' + this.styledSpan();
       el.classList.add('vjs-singleton');
-
       return el;
     },
     onClick: function onClick(event) {

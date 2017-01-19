@@ -137,7 +137,7 @@ domReady(function() {
       .on('ended', saveState)
       .on('transcriptstatechanged', saveState)
       .on('captionstatechanged', saveState)
-      .on('currentlanguagechanged', saveState);
+      .on('languagechange', saveState);
   });
 
 });

@@ -1,38 +1,46 @@
 domReady(function() {
   videojs('{{ video_player_id }}').ready(function() {
 
-    var tracks = this.textTracks();
     var enableTrack = false;
-    for (var i = 0; i < tracks.length; i++) {
-      var track = tracks[i];
-      if (track.kind === 'captions') {
-        if (track.language === this.captionsLanguage) {
-          track.mode = 'showing';
-          enableTrack = true;
-        } else {
-          track.mode = 'disabled';
-        }
-      };
-    };
-    if (!enableTrack && track.kind === 'captions') {
-      tracks[0].mode = 'showing';
-    }
-
-    // fire up the plugin
-    var transcript = this.transcript({
-      'showTrackSelector': false,
-      'showTitle': false,
-      'followPlayerTrack': true
-    });
-
+    var player_ = this;
     // attach the widget to the page
     var transcriptContainer = document.getElementById('transcript');
+    var initCaptions = function() {
 
-    // Show or hide the transcripts block depending on the transcript state
-    if (!this.transcriptsEnabled){
-      transcriptContainer.className += " is-hidden";
+      var tracks = player_.textTracks();
+      for (var i = 0; i < tracks.length; i++) {
+        var track = tracks[i];
+        if (track.kind === 'captions') {
+          if (track.language === player_.captionsLanguage) {
+            track.mode = 'showing';
+            enableTrack = true;
+          } else {
+            track.mode = 'disabled';
+          }
+        };
+      };
+      if (!enableTrack && track.kind === 'captions') {
+        tracks[0].mode = 'showing';
+      }
+      // fire up the plugin
+      var transcript = player_.transcript({
+        'showTrackSelector': false,
+        'showTitle': false,
+        'followPlayerTrack': true
+      });
+      // Show or hide the transcripts block depending on the transcript state
+      if (!player_.transcriptsEnabled){
+        transcriptContainer.className += " is-hidden";
+      };
+      transcriptContainer.appendChild(transcript.el());
     };
-    transcriptContainer.appendChild(transcript.el());
+
+    if (this.tagAttributes.brightcove !== undefined) {
+      // This branch for brightcove player
+      this.one("loadedmetadata", initCaptions);
+    } else {
+      initCaptions();
+    }
 
     this.on('transcriptenabled', function(){
       transcriptContainer.classList.toggle('is-hidden');
@@ -68,7 +76,6 @@ domReady(function() {
       this.captionsEnabled = false;
       this.trigger('captionstatechanged');
     });
-
     var cssClasses = "vjs-custom-caption-button vjs-menu-button vjs-menu-button-popup vjs-control vjs-button";
     if (this.captionsEnabled){
       cssClasses += ' vjs-control-enabled';
@@ -88,6 +95,12 @@ domReady(function() {
       enabledEvent: "transcriptenabled",
       disabledEvent: "transcriptdisabled",
       cssClasses: cssClasses,
+    });
+    this.toggleButton({
+      style: "fa-caret-left",
+      enabledEvent: "caretenabled",
+      disabledEvent: "caretdisabled",
+      cssClasses: "vjs-custom-caret-button vjs-menu-button vjs-menu-button-popup vjs-control vjs-button",
     });
 
   });

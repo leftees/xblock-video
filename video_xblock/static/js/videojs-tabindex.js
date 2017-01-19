@@ -47,9 +47,7 @@ domReady(function() {
           }
         });
     };
-
     orderTabIndex(this);
-
   });
 
 });
