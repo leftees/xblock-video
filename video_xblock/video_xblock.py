@@ -331,8 +331,9 @@ class VideoXBlock(TranscriptsMixin, StudioEditableXBlockMixin, XBlock):
         player_url = self.runtime.handler_url(self, 'render_player')
         download_transcript_handler_url = self.runtime.handler_url(self, 'download_transcript')
         transcript_download_link = self.get_transcript_download_link()
-        full_transcript_download_link = \
-            (download_transcript_handler_url + transcript_download_link) if transcript_download_link else ''
+        full_transcript_download_link = ''
+        if transcript_download_link:
+            full_transcript_download_link = download_transcript_handler_url + transcript_download_link
         frag = Fragment(
             self.render_resource(
                 'static/html/student_view.html',

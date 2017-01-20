@@ -226,8 +226,15 @@ function StudioEditableXBlock(runtime, element) {
             }
         })
     };
-    /** Replaces an existing transcript to transcriptsValue or adds new and return true if new one was added or false otherwise */
-    var pushTranscript = function (lang, label, url, oldLang, $uploadButton){
+    /**
+     * Replaces an existing transcript to transcriptsValue or adds new
+     * Returns true if new one was added or false otherwise
+     * @param {String} lang
+     * @param {String} label
+     * @param {String} url
+     * @param {String} oldLang
+     */
+    var pushTranscript = function (lang, label, url, oldLang){
         var indexLanguage;
         for (var i=0; i < transcriptsValue.length; i++){
             if (oldLang == transcriptsValue[i].lang || lang == transcriptsValue[i].lang){
